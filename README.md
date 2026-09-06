@@ -1,52 +1,77 @@
-# German Recruiter AI Persona
+# JobEval
 
-## Project by MaloneFreak (Pedro Giácomo)
+AI persona prompt that turns a capable LLM into **Frau Schmidt**, a senior German HR director for the DACH market.
 
-This project provides a detailed AI persona prompt designed to transform any capable Large Language Model (LLM) into an experienced German HR Recruiter. This "skill" helps job seekers by analyzing job postings and resumes, then generating tailored, ATS-safe resumes and compelling cover letters in either English or German.
+Version **1.1** (2026-09-06) · [MIT License](LICENSE)
 
-## How it Works
+She takes a candidate from raw CV + job ads to a complete *Bewerbungsmappe*: fit analysis, an ATS-safe Lebenslauf, and a DIN 5008 Form B Anschreiben — both as complete, compilable [Typst](https://typst.app) source.
 
-Once you paste the provided AI persona prompt into your preferred LLM, the AI will adopt the role of a German recruiter and guide you through the following process:
+This release supersedes v1.0 (phase-rush, chat-paste collision, Typst escaping, fold-mark clip).
 
-1.  **Resume & Job Analysis:** You will provide your current resume (e.g., paste the text, or describe its key sections) and one or more job descriptions. The AI will then analyze your resume against the job requirements and suggest the best matches.
-2.  **Job Selection:** Based on the AI's analysis, you select the job you want to apply for.
-3.  **Tailored Resume Generation:** The AI will create a customized resume specifically for the chosen job.
-    *   **Format:** The resume will be generated in **Markdown** format. Markdown is highly versatile, easy to read, and can be converted to various document types (including PDF) using simple online tools or software (e.g., Typora, VS Code with Markdown extensions, Pandoc, or even Google Docs/Microsoft Word importing a .md file). This ensures it's both ATS-safe and user-friendly for conversion.
-    *   **Language:** The resume will be generated in the language of the job description (English or German).
-4.  **Interview Questioning:** To gather specific details for your cover letter, the AI will ask you a few pertinent questions related to the job and your experience.
-5.  **Cover Letter Generation:** Using your answers, the AI will craft a persuasive cover letter tailored to the position.
-    *   **Format:** Like the resume, the cover letter will be in **Markdown** format for easy conversion and ATS compatibility.
-    *   **Language:** The cover letter will match the job description's language (English or German).
+## Contents
 
-## Why Markdown for Output?
+- [`german_recruiter_persona_prompt.txt`](german_recruiter_persona_prompt.txt) — operating manual / system prompt (source of truth)
+- [`LICENSE`](LICENSE) — MIT
 
-Markdown is chosen for its simplicity, readability, and compatibility across various platforms and tools. It's plain text with simple formatting syntax, making it:
-*   **ATS-Safe:** Most Applicant Tracking Systems can easily parse well-structured Markdown.
-*   **Easy to Convert:** Numerous free online converters and software can transform Markdown files into professional-looking PDFs, Word documents, or HTML files with minimal effort. This gives you full control over the final visual presentation without relying on the AI to generate a specific graphical format.
+## How to use
 
-## How to Use This Skill
+1. Copy the entire prompt file.
+2. Paste it as the **system prompt**. If the chat UI has no system field, send it as the first message.
+3. Provide your CV (plain text or clearly structured) and one or more job descriptions. You can paste prompt + CV + ads in one shot.
+4. Follow the stops. Frau Schmidt will not skip phases.
 
-1.  **Copy the AI Persona Prompt:** Copy the entire text from the `german_recruiter_persona_prompt.txt` (or the prompt provided below in this README).
-2.  **Start a New Chat:** Go to your preferred LLM (e.g., Gemini, ChatGPT, Claude) and start a brand new conversation.
-3.  **Paste the Prompt:** Paste the copied prompt into the chat and send it. The AI will now adopt the persona.
-4.  **Follow the AI's Instructions:** The AI will introduce itself and ask you to provide your resume and the job descriptions.
-5.  **Iterate:** Follow the steps as outlined by the AI to get your tailored resume and cover letter.
+| Phase | What you get | You do next |
+| --- | --- | --- |
+| 1 Assessment | Compatibility report (0–100) per job | Pick **one** posting |
+| 2 Lebenslauf | One Typst CV | Compile + answer intake questions |
+| 3 Intake | Start date, salary, Anlagen, motivation | Answer in one message |
+| 4 Anschreiben | One Typst letter (DIN 5008 Form B) | Compile |
 
-## Example Workflow
+Compile in the browser at [typst.app](https://typst.app) or locally:
 
-*   **You:** (Paste the persona prompt)
-*   **AI:** "Guten Tag! I am your experienced German HR Recruiter..."
-*   **You:** (Provide your resume text)
-*   **You:** (Provide job description 1, job description 2)
-*   **AI:** "Based on my analysis, Job 1 at Siemens and Job 2 at Bosch seem like excellent fits..."
-*   **You:** "I'd like to proceed with Job 1 at Siemens."
-*   **AI:** (Generates resume in Markdown)
-*   **AI:** "Now, to craft a compelling cover letter, please tell me: 1. What specifically attracts you to Siemens? 2. How does your experience in X directly relate to Y in this role?"
-*   **You:** (Answer the questions)
-*   **AI:** (Generates cover letter in Markdown)
+```bash
+typst compile lebenslauf.typ
+typst compile anschreiben.typ
+```
 
-## Contributions
+Every assistant turn ends with:
 
-Feel free to suggest improvements or enhancements to the prompt!
+```
+[STOP — waiting for: …]
+```
 
----
+## What v1.1 changes
+
+- Silent **Turn Router** (branches A–F) so greeting, assessment, CV, and letter never collide
+- Hard stop after Phase 1: zero Typst until you name a job
+- Lebenslauf and Anschreiben never in the same turn
+- Candidate text goes into `#let` strings so emails, URLs, `$`, `_`, and `#` compile
+- No Falzmarken / no negative `#place` (clips in Typst 0.11+)
+- AGG default: no photo, age, birth date, marital status, religion, or nationality unless you ask
+- Font lock: Libertinus Serif only; no packages, no uploaded fonts
+
+## Document contract
+
+- Output is Typst only (never Markdown or LaTeX application files)
+- Must compile as-is on typst.app and with `typst compile`
+- Real data only; unknown facts are omitted, never invented
+- Chat follows the candidate's language; documents follow the job ad
+- CV: 1 page for junior / internship / Werkstudent, 2 pages max otherwise
+- Letter: one page, bold Betreff without the word “Betreff”, no comma after “Mit freundlichen Grüßen”
+
+## Requirements
+
+- A capable long-context LLM (the prompt is about 17k characters)
+- Typst in the browser or via CLI
+- Your CV and target job postings
+
+## Releases
+
+| Tag | Date | Notes |
+| --- | --- | --- |
+| v1.1 | 2026-09-06 | Turn Router, Typst string discipline, DIN 5008 Form B without fold marks |
+| [v1.0](https://github.com/MaloneFreak/JobEval/releases/tag/v1.0) | 2026-09-05 | First public release |
+
+## License
+
+MIT.
