@@ -1,77 +1,70 @@
-# JobEval
+# JobEvalAI
 
-AI persona prompt that turns a capable LLM into **Frau Schmidt**, a senior German HR director for the DACH market.
+JobEvalAI turns a capable LLM into a market-specific recruitment-adviser persona.
 
-Version **1.1** (2026-09-06) · [MIT License](LICENSE)
+Choose one operating prompt per country. The assistant then guides a candidate from a CV and job advertisements to an evidence-based fit assessment, a tailored CV, and an optional cover letter — delivered as complete, self-contained [Typst](https://typst.app) source.
 
-She takes a candidate from raw CV + job ads to a complete *Bewerbungsmappe*: fit analysis, an ATS-safe Lebenslauf, and a DIN 5008 Form B Anschreiben — both as complete, compilable [Typst](https://typst.app) source.
+Documents use a text-first, single-column layout designed for straightforward text extraction. The German letter follows a DIN-5008-oriented digital business-letter layout; strict Form B conformity and rendered page counts require verification.
 
-This release supersedes v1.0 (phase-rush, chat-paste collision, Typst escaping, fold-mark clip).
+## Markets
 
-## Contents
+| Market | Persona | Prompt | Version |
+| --- | --- | --- | --- |
+| Germany | Frau Schmidt | [Frau-Schmidt-Germany.txt](Frau-Schmidt-Germany.txt) | 1.2.0-rc1 |
+| Spain | Elena Martínez | [Elena-Martinez-Spain.txt](Elena-Martinez-Spain.txt) | 1.0.0-rc1 |
 
-- [`german_recruiter_persona_prompt.txt`](german_recruiter_persona_prompt.txt) — operating manual / system prompt (source of truth)
-- [`LICENSE`](LICENSE) — MIT
+Spain means Spain, not all Spanish-speaking countries. Germany is the primary DACH edition; Austria and Switzerland are not fully localized.
+
+Each `.txt` is self-contained. Copy one file into the LLM as system or custom instructions. Do not mix two personas in the same chat.
 
 ## How to use
 
-1. Copy the entire prompt file.
-2. Paste it as the **system prompt**. If the chat UI has no system field, send it as the first message.
-3. Provide your CV (plain text or clearly structured) and one or more job descriptions. You can paste prompt + CV + ads in one shot.
-4. Follow the stops. Frau Schmidt will not skip phases.
-
-| Phase | What you get | You do next |
-| --- | --- | --- |
-| 1 Assessment | Compatibility report (0–100) per job | Pick **one** posting |
-| 2 Lebenslauf | One Typst CV | Compile + answer intake questions |
-| 3 Intake | Start date, salary, Anlagen, motivation | Answer in one message |
-| 4 Anschreiben | One Typst letter (DIN 5008 Form B) | Compile |
-
-Compile in the browser at [typst.app](https://typst.app) or locally:
+1. Copy the prompt for the target country into a capable LLM as the operating instructions.
+2. Send your CV or structured career history and one or more job advertisements.
+3. Review the compatibility assessment and explicitly select one job (`J1`, `J2`, …).
+4. Receive the CV as Typst source, answer remaining letter questions, then receive the letter.
+5. Save and compile, for example:
 
 ```bash
 typst compile lebenslauf.typ
 typst compile anschreiben.typ
 ```
 
-Every assistant turn ends with:
+Browser compilation: [typst.app](https://typst.app).
 
-```
-[STOP — waiting for: …]
-```
+Chat follows the candidate's language, including Portuguese. Document language follows the employer instruction or the advertisement.
 
-## What v1.1 changes
+The assistant does not submit applications, contact employers, or upload your data.
 
-- Silent **Turn Router** (branches A–F) so greeting, assessment, CV, and letter never collide
-- Hard stop after Phase 1: zero Typst until you name a job
-- Lebenslauf and Anschreiben never in the same turn
-- Candidate text goes into `#let` strings so emails, URLs, `$`, `_`, and `#` compile
-- No Falzmarken / no negative `#place` (clips in Typst 0.11+)
-- AGG default: no photo, age, birth date, marital status, religion, or nationality unless you ask
-- Font lock: Libertinus Serif only; no packages, no uploaded fonts
+## What this release does not claim
 
-## Document contract
+- Not an ATS score, hiring decision, or interview probability.
+- Not universal ATS compatibility.
+- Not legal advice on AGG, GDPR, visas, or qualification recognition.
+- Missing evidence is not treated as a confirmed unmet requirement.
+- Cover letters are optional. Salary questions are conditional.
+- Source generation is not PDF creation. Page counts are verified only after compilation.
 
-- Output is Typst only (never Markdown or LaTeX application files)
-- Must compile as-is on typst.app and with `typst compile`
-- Real data only; unknown facts are omitted, never invented
-- Chat follows the candidate's language; documents follow the job ad
-- CV: 1 page for junior / internship / Werkstudent, 2 pages max otherwise
-- Letter: one page, bold Betreff without the word “Betreff”, no comma after “Mit freundlichen Grüßen”
+## Changelog
 
-## Requirements
+### v1.2.0
 
-- A capable long-context LLM (the prompt is about 17k characters)
-- Typst in the browser or via CLI
-- Your CV and target job postings
+Germany (`Frau-Schmidt-Germany.txt`, 1.2.0-rc1) and first Spain edition (`Elena-Martinez-Spain.txt`, 1.0.0-rc1).
 
-## Releases
-
-| Tag | Date | Notes |
-| --- | --- | --- |
-| v1.1 | 2026-09-06 | Turn Router, Typst string discipline, DIN 5008 Form B without fold marks |
-| [v1.0](https://github.com/MaloneFreak/JobEval/releases/tag/v1.0) | 2026-09-05 | First public release |
+- Explicit per-job state and deterministic phase routing.
+- Transparent evidence-based compatibility scoring.
+- Missing evidence distinguished from confirmed unmet requirements.
+- Targeted intake; previously answered questions are not repeated.
+- Safe handling of target changes, factual corrections and compile errors.
+- Privacy defaults without overstating AGG requirements.
+- No inferred CEFR levels, date precision or qualification equivalence.
+- No nationality-based authorization assumptions or cultural stereotypes.
+- Data-first Typst structure and safer list rendering.
+- Removed missing-image placeholders.
+- Optional cover letter and conditional salary questions.
+- Honest compilation, page-count, ATS and DIN conformity claims.
+- Separate self-contained prompt per country. `german_recruiter_persona_prompt.txt` is replaced by `Frau-Schmidt-Germany.txt`.
 
 ## License
 
-MIT.
+MIT. See [LICENSE](LICENSE).
