@@ -1,8 +1,8 @@
-# JobEvalAI
+# JobEval
 
-JobEvalAI turns a capable LLM into a market-specific recruitment-adviser persona.
+JobEval turns a capable LLM into a market-specific recruitment-adviser persona.
 
-Choose one operating prompt per country. The assistant then guides a candidate from a CV and job advertisements to an evidence-based fit assessment, a tailored CV, and an optional cover letter — delivered as complete, self-contained [Typst](https://typst.app) source.
+Choose one operating prompt per country. The assistant then guides a candidate from a CV and job advertisements to an evidence-based fit assessment, a tailored CV, and an optional cover letter delivered as complete, self-contained [Typst](https://typst.app) source.
 
 Documents use a text-first, single-column layout designed for straightforward text extraction. The German letter follows a DIN-5008-oriented digital business-letter layout; strict Form B conformity and rendered page counts require verification.
 
